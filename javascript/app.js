@@ -91,3 +91,107 @@ $(document).ready(function () {
     setInterval(countdown, 1);
 
 })
+
+
+     // Your web app's Firebase configuration
+     var firebaseConfig = {
+        apiKey: "AIzaSyAAAPRsS6JnfsWK-Fhz4ioHxP5zRNIvBfQ",
+        authDomain: "alexei-930cb.firebaseapp.com",
+        databaseURL: "https://alexei-930cb.firebaseio.com",
+        projectId: "alexei-930cb",
+        storageBucket: "",
+        messagingSenderId: "856201311867",
+        appId: "1:856201311867:web:0c4f145a7cf5526f6854de"
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+    
+        
+        var dataRef = firebase.database();
+    
+          // Initial Values
+          $("#input-train").val(" ");
+          $("#input-destination").val(" ");
+          $("#train-time").val(" ");
+          $("#input-frequency").val(" ");
+    
+        
+    
+    
+    
+        //declare variables that will hold the imput of each rext field
+        $("#submit").on("click", function (event) {
+          event.preventDefault();
+          var inputTrain = $("#input-train").val();
+          console.log(inputTrain)
+          var inputDestination = $("#input-destination").val();
+          console.log(inputDestination)
+          var firstTrain = $("#train-time").val();
+          console.log(firstTrain)
+          var inputFrequency = $("#input-frequency").val();
+          console.log(inputFrequency)
+    
+    // Code for the push
+     dataRef.ref().push({
+          inputTrain: inputTrain,
+          inputDestination: inputDestination,
+          firstTrain: firstTrain,
+          inputFrequency: inputFrequency,
+          // firstTimeConverted: firstTimeConverted,
+          
+          
+          });
+    
+        });
+    
+        // Firebase watcher + initial loader HINT: .on("value")
+        dataRef.ref().on("child_added", function(snapshot) {
+          // Log everything that's coming out of snapshot
+          console.log(snapshot.val());
+          console.log(snapshot.val().inputTrain);
+          console.log(snapshot.val().inputDestination);
+          console.log(snapshot.val().firstTrain);
+          console.log(snapshot.val().inputFrequency);
+    
+          var inputDestination = snapshot.val().inputDestination
+          var inputTrain = snapshot.val().inputTrain
+          var firstTrain = snapshot.val().firstTrain
+          var inputFrequency = snapshot.val().inputFrequency
+          // First Time (pushed back 1 year to make sure it comes before current time)
+        var firstTimeConverted = moment(firstTrain, "HH:mm").subtract(1, "years");
+        console.log(firstTimeConverted);
+    
+        // Current Time
+        var currentTime = moment();
+        var currentTime =("CURRENT TIME: " + moment(currentTime).format('MMMM Do YYYY, h:mm:ss a'));
+    
+        // Difference between the times
+        var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+        console.log("DIFFERENCE IN TIME: " + diffTime);
+    
+        // Time apart (remainder)
+        var tRemainder = diffTime % inputFrequency;
+        // console.log("time remainder" + " " + tRemainder);
+    
+        // Minute Until Train
+        var tMinutesTillTrain = inputFrequency - tRemainder;
+        console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
+    
+        // Next Train
+        var nextTrain = moment().add(tMinutesTillTrain, "minutes");
+        var nextTrain = (moment(nextTrain).format("hh:mm"));
+        
+         // Create the new row
+      var newRow = $("<tr>").append(
+        $("<td>").text(inputTrain),
+        $("<td>").text(inputDestination),
+        $("<td>").text(inputFrequency),
+        $("<td>").text(nextTrain),
+        $("<td>").text(tMinutesTillTrain),
+        
+      );
+      // var m = moment();
+      // Append the new row to the table
+      $("#employee-table > tbody").append(newRow);
+      $("#current-time").html("<h2>" + " " + currentTime + " " + "</h2>");
+      });
