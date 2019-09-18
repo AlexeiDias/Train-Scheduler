@@ -1,0 +1,10 @@
+.jumbotron {
+    background-image: url(../assets/images/1.jpg);
+    background-size: 100% 100%;
+    color: white;
+    font-family: 'Archivo Black', sans-serif;
+    text-shadow: 2px 2px black;
+    /* font-family: 'Faster One', cursive; */
+
+     
+}
